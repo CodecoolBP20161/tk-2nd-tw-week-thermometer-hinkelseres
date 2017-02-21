@@ -3,9 +3,13 @@
 #include "codecool_i2c.h"
 #include "codecool_serial.h"
 #include "codecool_joystick.h"
+#include "codecool_pwm.h"
+#include "codecool_shield_names.h"
 
 
 #define LM75_ADDRESS 0x90
+
+void led_switch(float temp);
 
 int main(){
    I2C_FREQ(100000);
@@ -32,6 +36,7 @@ int main(){
     	   SERIAL_RECV(buffer, 12);
     	   uint8_t int_part = (int8_t)buffer[0];
     	   temp = int_part + 0.5f * ((buffer[1]&0x80)>>7);
+    	   led_switch(temp);
        }
        LCD_CLS();
        LCD_LOCATE(0, 0);
@@ -39,4 +44,29 @@ int main(){
 
        wait(5);
    }
+}
+
+void led_switch(float temp){
+	PWM_INIT(LED_GREEN_SHIELD);
+	PWM_INIT(LED_RED_SHIELD);
+	PWM_INIT(LED_BLUE_SHIELD);
+	PWM_FREQUENCY(LED_RED_SHIELD, 2000);
+	PWM_FREQUENCY(LED_GREEN_SHIELD, 2000);
+	PWM_FREQUENCY(LED_BLUE_SHIELD, 2000);
+	PWM_SET_PULSE_WIDTH(LED_GREEN_SHIELD, 0);
+	PWM_SET_PULSE_WIDTH(LED_RED_SHIELD, 0);
+	PWM_SET_PULSE_WIDTH(LED_BLUE_SHIELD, 0);
+	if (temp < 10){
+		PWM_SET_PULSE_WIDTH(LED_BLUE_SHIELD, 100);
+	} else if (temp >=10 && temp < 18) {
+		PWM_SET_PULSE_WIDTH(LED_BLUE_SHIELD, 100);
+		PWM_SET_PULSE_WIDTH(LED_GREEN_SHIELD, 100);
+	} else if (temp >=18 && temp < 30){
+		PWM_SET_PULSE_WIDTH(LED_GREEN_SHIELD, 100);
+	} else if (temp >=30 && temp < 34) {
+		PWM_SET_PULSE_WIDTH(LED_GREEN_SHIELD, 100);
+		PWM_SET_PULSE_WIDTH(LED_RED_SHIELD, 100);
+	} else {
+		PWM_SET_PULSE_WIDTH(LED_RED_SHIELD, 100);
+	}
 }
