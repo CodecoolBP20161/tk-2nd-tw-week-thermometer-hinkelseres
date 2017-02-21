@@ -9,6 +9,7 @@
 
 #define LM75_ADDRESS 0x90
 
+void led_init();
 void led_switch(float temp);
 
 int main(){
@@ -22,6 +23,7 @@ int main(){
    SERIAL_SET_NON_BLOCKING();
    uint8_t buffer[12];
    float temp;
+
 
    while (true) {
 
@@ -46,16 +48,17 @@ int main(){
    }
 }
 
+void led_init() {
+	PinName leds[3] = {LED_GREEN_SHIELD, LED_RED_SHIELD, LED_BLUE_SHIELD};
+	for (int i = 0; i < 3;i++) {
+		PWM_INIT(leds[i]);
+		PWM_FREQUENCY(leds[i], 2000);
+		PWM_SET_PULSE_WIDTH(leds[i],0);
+	}
+}
+
 void led_switch(float temp){
-	PWM_INIT(LED_GREEN_SHIELD);
-	PWM_INIT(LED_RED_SHIELD);
-	PWM_INIT(LED_BLUE_SHIELD);
-	PWM_FREQUENCY(LED_RED_SHIELD, 2000);
-	PWM_FREQUENCY(LED_GREEN_SHIELD, 2000);
-	PWM_FREQUENCY(LED_BLUE_SHIELD, 2000);
-	PWM_SET_PULSE_WIDTH(LED_GREEN_SHIELD, 0);
-	PWM_SET_PULSE_WIDTH(LED_RED_SHIELD, 0);
-	PWM_SET_PULSE_WIDTH(LED_BLUE_SHIELD, 0);
+	led_init();
 	if (temp < 10){
 		PWM_SET_PULSE_WIDTH(LED_BLUE_SHIELD, 100);
 	} else if (temp >=10 && temp < 18) {
