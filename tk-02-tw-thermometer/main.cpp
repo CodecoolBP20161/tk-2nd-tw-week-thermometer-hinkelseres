@@ -17,7 +17,6 @@ int main(){
    SERIAL_BAUD(9600);
    SERIAL_SET_NON_BLOCKING();
    uint8_t buffer[12];
-
    float temp;
 
    while (true) {
@@ -25,16 +24,18 @@ int main(){
 
        LCD_CLS();
        LCD_LOCATE(0, 0);
-       LCD_PRINTF("Waiting for msg");
+       LCD_PRINTF("Waiting for temperature...");
        wait(1);
 
        memset(buffer, 0x00, sizeof (buffer));
        if (JOYSTICK_PUSHED) {
     	   SERIAL_RECV(buffer, 12);
+    	   uint8_t int_part = (int8_t)buffer[0];
+    	   temp = int_part + 0.5f * ((buffer[1]&0x80)>>7);
        }
        LCD_CLS();
        LCD_LOCATE(0, 0);
-       LCD_PRINTF("Get: %s", buffer);
+       LCD_PRINTF("Got: %0.1f", temp);
 
        wait(5);
    }
