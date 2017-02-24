@@ -1,13 +1,14 @@
 #include "mbed.h"
-#include "codecool_serial.h"
-#include "codecool_joystick.h"
 #include "codecool_lcd.h"
 #include "codecool_i2c.h"
+#include "codecool_serial.h"
+#include "codecool_joystick.h"
+#include "codecool_pwm.h"
+#include "codecool_shield_names.h"
 
 #define LM75_ADDRESS 0x90
 
-
-int main() {
+int sender_main() {
     SERIAL_BAUD(9600);
     SERIAL_SET_NON_BLOCKING();
 
