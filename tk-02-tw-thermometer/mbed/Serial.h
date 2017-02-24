@@ -57,6 +57,10 @@ public:
      */
     Serial(PinName tx, PinName rx, const char *name=NULL);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fd7f215dfbbca1086902301b8ecdf5a592746fed
     virtual int _getc();
     virtual int _putc(int c);
 };
